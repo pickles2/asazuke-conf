@@ -1,32 +1,32 @@
 /**
  * AsazukeConf更新
  */
-module.exports = new (function () {
+module.exports = new(function() {
     var fs = require('fs');
     var lstat = fs.lstatSync;
     var path = require('path');
-
+    
     this.AsazukeConfFilePath;
-    this.init = function (AsazukeConfFilePath) {
+    this.init = function (AsazukeConfFilePath){
         // TODO シンボリックリンク対策 絶対パスの場合はエラーになるかも。。。
         if (lstat(AsazukeConfFilePath).isSymbolicLink()) {
             // this.AsazukeConfFilePath = path.dirname(AsazukeConfFilePath) + '/'+ fs.readlinkSync(AsazukeConfFilePath);
             // for windows
-            this.AsazukeConfFilePath = path.dirname(AsazukeConfFilePath) + '/' + path.basename(fs.readlinkSync(AsazukeConfFilePath));
+            this.AsazukeConfFilePath = path.dirname(AsazukeConfFilePath) + '/'+ path.basename(fs.readlinkSync(AsazukeConfFilePath));
         } else {
-            this.AsazukeConfFilePath = AsazukeConfFilePath;
+            this.AsazukeConfFilePath = AsazukeConfFilePath; 
         }
     }
-
-    this.readConf = function (cb) {
+    
+    this.readConf = function (cb){
         var i = 1;
         var url, startPath, authUser, authPass, matchString;
         var data = [""];
         var readline = require('readline');
         var rs = fs.ReadStream(this.AsazukeConfFilePath);
-        var rl = readline.createInterface({ 'input': rs, 'output': {} });
-
-        rl.on('line', function (line) {
+        var rl = readline.createInterface({'input': rs, 'output': {}});
+        
+        rl.on('line', function(line) {
             data.push(line);
             // data.push({ "lineNo": i, "value":line});
 
@@ -75,16 +75,16 @@ module.exports = new (function () {
                 }
             }
             i++;
-        }).on('close', function () {
+        }).on('close', function() {
             cb({
-                "conf": {
-                    "url": url,
-                    "startPath": startPath,
-                    "authUser": authUser,
-                    "authPass": authPass
-                },
-                "data": data
-            });
+                    "conf":{
+                        "url":url,
+                        "startPath":startPath,
+                        "authUser":authUser,
+                        "authPass":authPass
+                    },
+                    "data": data
+                    });
         });
         rl.resume();
     }
@@ -94,8 +94,8 @@ module.exports = new (function () {
      * 行数と行データに分割し対象のデータを置き換える。
      */
     this.updateConf = function (newUrl, newStartPath, newAuthUser, newAuthPass) {
-        var _AsazukeConfFilePath = this.AsazukeConfFilePath;
-        this.readConf(function (result) {
+        var _AsazukeConfFilePath =  this.AsazukeConfFilePath;
+        this.readConf(function(result){
             var addslashes = function (str) {
                 //  discuss at: http://phpjs.org/functions/addslashes/
                 // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -111,7 +111,7 @@ module.exports = new (function () {
 
                 return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
             }
-
+            
             result.data[result.conf.url.lineNo] = "    public static $url = '%s';".replace('%s', addslashes(newUrl));
             result.data[result.conf.startPath.lineNo] = "    public static $startPath = '%s';".replace('%s', addslashes(newStartPath));
             result.data[result.conf.authUser.lineNo] = "    public static $authUser = '%s';".replace('%s', addslashes(newAuthUser));
@@ -119,7 +119,7 @@ module.exports = new (function () {
 
             result.data.shift(); // 配列から先頭の要素を削除
             
-            fs.writeFile(_AsazukeConfFilePath, result.data.join("\n"), function (err) {
+            fs.writeFile(_AsazukeConfFilePath, result.data.join("\n"), function(err) {
                 if (err) throw err;
                 console.log('It\'s saved!');
             });

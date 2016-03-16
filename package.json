@@ -1,22 +1,11 @@
 {
   "name": "asazuke-conf",
-  "version": "0.0.1",
-  "description": "description",
+  "version": "1.0.0",
+  "description": "",
   "main": "asazuke-conf.js",
   "scripts": {
-    "test": "echo \"test\""
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:pickles2/asazuke-conf"
-  },
-  "keywords": [
-    "asazuke"
-  ],
-  "author": "Misaki Shibata",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pickles2/asazuke-conf/issues"
-  },
-  "homepage": "https://github.com/pickles2/asazuke-conf"
+  "author": "",
+  "license": "ISC"
 }
