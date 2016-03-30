@@ -93,7 +93,7 @@ module.exports = new(function() {
     /**
      * 行数と行データに分割し対象のデータを置き換える。
      */
-    this.updateConf = function (newUrl, newStartPath, newAuthUser, newAuthPass) {
+    this.updateConf = function (newUrl, newStartPath, newAuthUser, newAuthPass, update_cb) {
         var _AsazukeConfFilePath =  this.AsazukeConfFilePath;
         this.readConf(function(result){
             var addslashes = function (str) {
@@ -122,6 +122,9 @@ module.exports = new(function() {
             fs.writeFile(_AsazukeConfFilePath, result.data.join("\n"), function(err) {
                 if (err) throw err;
                 console.log('It\'s saved!');
+		if (typeof update_cb == 'function') {
+			update_cb();
+		}
             });
         });
     }
